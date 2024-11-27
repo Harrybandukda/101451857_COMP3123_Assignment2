@@ -38,6 +38,21 @@ router.get('/employees/search', async (req, res) => {
     }
 });
 
+// Get Departments and Positions for Search Filter
+router.get('/employees/metadata', async (req, res) => {
+    try {
+        console.log("Fetching distinct departments and positions...");
+        const departments = await Employee.distinct('department');
+        const positions = await Employee.distinct('position');
+        console.log("Departments:", departments);
+        console.log("Positions:", positions);
+        res.status(200).json({ departments, positions });
+    } catch (err) {
+        console.error("Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // Get Employee by ID
 router.get('/employees/:id', async (req, res) => {
     try {
@@ -73,5 +88,6 @@ router.delete('/employees/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 module.exports = router;

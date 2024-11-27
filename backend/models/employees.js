@@ -6,7 +6,7 @@ const employees = new mongoose.Schema({
     email: {type: String, required: true},
     position: { type: String, required: true },
     salary: { type: Number, required: true },
-    date_of_joining: {type: Date, required: true},
+    date_of_joining: {type: Date, required: false, default: Date.now},
     department: { type: String, required: true }
 }, { timestamps: true }
 

@@ -35,3 +35,14 @@ export const deleteEmployee = async (id) => {
 export const searchEmployees = async (searchParams) => {
   return api.get(`/emp/employees/search`, { params: searchParams });
 };
+
+export const getDepartmentsAndPositions = async () => {
+  try {
+    const response = await api.get('/emp/employees/metadata');
+    return response.data;  
+  } catch (error) {
+    console.error("Error fetching departments and positions:", error);
+    throw error;
+  }
+};
+
