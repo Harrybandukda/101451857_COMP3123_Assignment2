@@ -2,82 +2,75 @@ const express = require('express');
 const router = express.Router();
 const Employee = require('../models/employees');
 
-// Get all employees
+// Create Employee
+router.post('/employees', async (req, res) => {
+    try {
+        const employee = new Employee(req.body);
+        await employee.save();
+        res.status(201).json(employee);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+// Get All Employees
 router.get('/employees', async (req, res) => {
     try {
-        const employees = await Employee.find(); 
-        res.status(200).send(employees); 
+        const employees = await Employee.find();
+        res.status(200).json(employees);
     } catch (err) {
-        res.status(500).send({ message: 'Server error. Could not retrieve employees.' });
+        res.status(500).json({ error: err.message });
     }
 });
 
-// Add new employee
-router.post('/employees', async (req, res) => {
-    const employee = new Employee(req.body); 
+// Search Employees
+router.get('/employees/search', async (req, res) => {
+    const { department, position } = req.query;
     try {
-        await employee.save();
-        res.status(201).send({
-            message: 'Employee created successfully.',
-            employee_id: employee._id 
+        const query = {};
+        if (department) query.department = department;
+        if (position) query.position = position;
+
+        const employees = await Employee.find(query);
+        res.status(200).json(employees);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get Employee by ID
+router.get('/employees/:id', async (req, res) => {
+    try {
+        const employee = await Employee.findById(req.params.id);
+        if (!employee) return res.status(404).json({ error: 'Employee not found' });
+        res.status(200).json(employee);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Update Employee
+router.put('/employees/:id', async (req, res) => {
+    try {
+        const employee = await Employee.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true,
         });
+        if (!employee) return res.status(404).json({ error: 'Employee not found' });
+        res.status(200).json(employee);
     } catch (err) {
-        res.status(400).send({
-            message: 'Error creating employee.',
-            error: err.message 
-        });
+        res.status(400).json({ error: err.message });
     }
 });
 
-// Get employee by ID
-router.get('/employees/:eid', async (req, res) => {
-    const {eid} = req.params; 
+// Delete Employee
+router.delete('/employees/:id', async (req, res) => {
     try {
-        const employee = await Employee.findById(eid); 
-        if (!employee) {
-            return res.status(404).send({ message: 'Emp not found.' }); 
-        }
-        res.status(200).send(employee); 
+        const employee = await Employee.findByIdAndDelete(req.params.id);
+        if (!employee) return res.status(404).json({ error: 'Employee not found' });
+        res.status(200).json({ message: 'Employee deleted', employee });
     } catch (err) {
-        res.status(500).send({ message: 'Server issue. Could not retieve emp.' });
-    }
-});
-
-// Update employee details
-router.put('/employees/:eid', async (req, res) => {
-    const { eid } = req.params; 
-    const updates = req.body; 
-    try {
-        const employee = await Employee.findByIdAndUpdate(eid, updates, { new: true, runValidators: true }); 
-        if (!employee) {
-            return res.status(404).send({ message: 'employee not found.' }); 
-        }
-        res.status(200).send({
-            message: 'Employee details updated.',
-            employee
-        }); 
-    } catch (err) {
-        res.status(400).send({ 
-            message: 'Error updating employee.',
-            error: err.message 
-        });
-    }
-});
-
-// Delete employee
-router.delete('/employees/:eid', async (req, res) => {
-    const { eid } = req.params; 
-    try {
-        const employee = await Employee.findByIdAndDelete(eid);
-        if (!employee) {
-            return res.status(404).send({ message: 'employee not found.' }); 
-        }
-        res.status(200).send({
-            message: 'Employee deleted.',
-            employee
-        }); 
-    } catch (err) {
-        res.status(500).send({ message: 'Server issue. Could not delete employee.' });
+        res.status(500).json({ error: err.message });
     }
 });
 
