@@ -83,6 +83,27 @@ const AddEmployee = () => {
             margin="normal"
             required
           />
+          <TextField 
+            fullWidth 
+            label="Salary" 
+            name="salary" 
+            value={formData.salary} 
+            onChange={handleChange} 
+            margin="normal"
+            required
+            type="number"
+          />
+          <TextField 
+            fullWidth 
+            label="Date of Joining" 
+            name="date_of_joining" 
+            value={formData.date_of_joining} 
+            onChange={handleChange} 
+            margin="normal"
+            required
+            type="date"
+          />
+
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
             <Button
               variant="outlined"
