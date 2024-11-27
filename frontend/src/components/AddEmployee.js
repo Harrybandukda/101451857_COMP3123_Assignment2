@@ -4,6 +4,7 @@ import { addEmployee } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { validateField, validateForm } from '../utils/validation';
 
 const AddEmployee = () => {
   const [formData, setFormData] = useState({
@@ -12,15 +13,27 @@ const AddEmployee = () => {
     email: '',
     position: '',
     department: '',
+    salary: '',
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrors({ ...errors, [name]: error });
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = validateForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
       await addEmployee(formData);
       alert('Employee added successfully');
@@ -45,6 +58,8 @@ const AddEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.first_name}
+            helperText={errors.first_name}
           />
           <TextField 
             fullWidth 
@@ -54,6 +69,8 @@ const AddEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.last_name}
+            helperText={errors.last_name}
           />
           <TextField 
             fullWidth 
@@ -64,6 +81,8 @@ const AddEmployee = () => {
             margin="normal"
             required
             type="email"
+            error={!!errors.email}
+            helperText={errors.email}
           />
           <TextField 
             fullWidth 
@@ -73,6 +92,8 @@ const AddEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.position}
+            helperText={errors.position}
           />
           <TextField 
             fullWidth 
@@ -82,6 +103,8 @@ const AddEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.department}
+            helperText={errors.department}
           />
           <TextField 
             fullWidth 
@@ -92,6 +115,8 @@ const AddEmployee = () => {
             margin="normal"
             required
             type="number"
+            error={!!errors.salary}
+            helperText={errors.salary}
           />
           <TextField 
             fullWidth 
