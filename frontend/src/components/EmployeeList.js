@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { getEmployees, deleteEmployee, searchEmployees, getDepartmentsAndPositions } from '../services/api'; 
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -11,13 +12,13 @@ const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [department, setDepartment] = useState('');
   const [position, setPosition] = useState('');
-  const [departments, setDepartments] = useState([]);  
-  const [positions, setPositions] = useState([]);     
+  const [departments, setDepartments] = useState([]);
+  const [positions, setPositions] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchEmployees();
-    fetchDepartmentsAndPositions();  
+    fetchDepartmentsAndPositions();
   }, []);
 
   const fetchEmployees = async (searchParams = {}) => {
@@ -37,8 +38,8 @@ const EmployeeList = () => {
   const fetchDepartmentsAndPositions = async () => {
     try {
       const response = await getDepartmentsAndPositions();
-      setDepartments(response.departments);  
-      setPositions(response.positions);      
+      setDepartments(response.departments);
+      setPositions(response.positions);
     } catch (error) {
       console.error('Error fetching departments and positions:', error);
     }
@@ -57,6 +58,10 @@ const EmployeeList = () => {
     navigate(`/employee/${id}`);
   };
 
+  const handleEdit = (id) => {
+    navigate(`/edit-employee/${id}`);
+  };
+
   const handleSearch = () => {
     const searchParams = {};
     if (department) searchParams.department = department;
@@ -65,7 +70,7 @@ const EmployeeList = () => {
   };
 
   return (
-    <Box sx={{ mt: 4, mx: 'auto', maxWidth: 1000 }}>
+    <Box sx={{ mt: 4, mx: 'auto', maxWidth: 1200 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Employee List
@@ -120,18 +125,26 @@ const EmployeeList = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
+              <TableCell>First Name</TableCell>
+              <TableCell>Last Name</TableCell>
+              <TableCell>Email</TableCell>
               <TableCell>Position</TableCell>
               <TableCell>Department</TableCell>
+              <TableCell>Salary</TableCell>
+              <TableCell>Date of Joining</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {employees.map((employee) => (
               <TableRow key={employee._id}>
-                <TableCell>{employee.first_name} {employee.last_name}</TableCell>
+                <TableCell>{employee.first_name}</TableCell>
+                <TableCell>{employee.last_name}</TableCell>
+                <TableCell>{employee.email}</TableCell>
                 <TableCell>{employee.position}</TableCell>
                 <TableCell>{employee.department}</TableCell>
+                <TableCell>${employee.salary.toLocaleString()}</TableCell>
+                <TableCell>{new Date(employee.date_of_joining).toLocaleDateString()}</TableCell>
                 <TableCell align="center">
                   <Button
                     startIcon={<VisibilityIcon />}
@@ -139,6 +152,14 @@ const EmployeeList = () => {
                     sx={{ mr: 1 }}
                   >
                     View
+                  </Button>
+                  <Button
+                    startIcon={<EditIcon />}
+                    onClick={() => handleEdit(employee._id)}
+                    color="secondary"
+                    sx={{ mr: 1 }}
+                  >
+                    Update
                   </Button>
                   <Button
                     startIcon={<DeleteIcon />}
