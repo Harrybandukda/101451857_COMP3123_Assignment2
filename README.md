@@ -56,19 +56,19 @@ http://localhost:3000
 
 | Method | Endpoint          | Description           |
 |--------|-------------------|-----------------------|
-| GET    | `/api/users`      | Fetch all users       |
-| POST   | `/api/users`      | Create a new user     |
+| GET    | `/api/v1/user/login`      | Fetch all users       |
+| POST   | `/api/v1/user/signup`      | Create a new user     |
 
 ### Employee Routes (`/api/employees`)
 
 | Method | Endpoint                 | Description                           |
 |--------|--------------------------|---------------------------------------|
-| GET    | `/api/employees`         | Fetch all employees                   |
-| POST   | `/api/employees`         | Create a new employee                 |
-| GET    | `/api/employees/:id`     | Fetch an employee by ID               |
-| PUT    | `/api/employees/:id`     | Update an employee by ID              |
-| DELETE | `/api/employees/:id`     | Delete an employee by ID              |
-| GET    | `/api/employees/search`  | Search employees by department/position |
+| GET    | `/api/v1/emp/employees`         | Fetch all employees                   |
+| POST   | `/api/v1/emp/employees`         | Create a new employee                 |
+| GET    | `/api/v1/emp/employees/:id`     | Fetch an employee by ID               |
+| PUT    | `/api/v1/emp/employees/:id`     | Update an employee by ID              |
+| DELETE | `/api/v1/emp/employees/:id`     | Delete an employee by ID              |
+| GET    | `/api/v1/emp/employees/search`  | Search employees by department/position |
 
 ---
 
