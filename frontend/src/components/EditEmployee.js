@@ -37,7 +37,7 @@ const EditEmployee = () => {
       alert('Employee updated successfully');
       navigate('/employees');
     } catch (err) {
-      alert('Error updating employee');
+      alert('Error updating employe');
     }
   };
 
