@@ -4,6 +4,7 @@ import { getEmployeeById, updateEmployee } from '../services/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { validateField, validateForm } from '../utils/validation';
 
 const EditEmployee = () => {
   const [formData, setFormData] = useState({
@@ -12,9 +13,9 @@ const EditEmployee = () => {
     email: '',
     position: '',
     department: '',
-    salary: '', }
-  );
-  
+    salary: '',
+  });
+  const [errors, setErrors] = useState({});
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -34,17 +35,20 @@ const EditEmployee = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    
-    if (name === 'salary') {
-      if (!/^\d*\.?\d*$/.test(value)) return; 
-    }
-
+    const error = validateField(name, value);
+    setErrors({ ...errors, [name]: error });
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const validationErrors = validateForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     try {
       await updateEmployee(id, formData);
       alert('Employee updated successfully');
@@ -70,6 +74,8 @@ const EditEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.first_name}
+            helperText={errors.first_name}
           />
           <TextField 
             fullWidth 
@@ -79,6 +85,8 @@ const EditEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.last_name}
+            helperText={errors.last_name}
           />
           <TextField 
             fullWidth 
@@ -89,6 +97,8 @@ const EditEmployee = () => {
             margin="normal"
             required
             type="email"
+            error={!!errors.email}
+            helperText={errors.email}
           />
           <TextField 
             fullWidth 
@@ -98,6 +108,8 @@ const EditEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.position}
+            helperText={errors.position}
           />
           <TextField 
             fullWidth 
@@ -107,6 +119,8 @@ const EditEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
+            error={!!errors.department}
+            helperText={errors.department}
           />
           <TextField 
             fullWidth 
@@ -116,8 +130,9 @@ const EditEmployee = () => {
             onChange={handleChange} 
             margin="normal"
             required
-            type="text"
-            inputProps={{ inputMode: 'decimal' }} 
+            type="number"
+            error={!!errors.salary}
+            helperText={errors.salary}
           />
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
             <Button
