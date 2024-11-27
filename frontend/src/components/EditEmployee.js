@@ -12,7 +12,8 @@ const EditEmployee = () => {
     email: '',
     position: '',
     department: '',
-  });
+    salary: '', }
+  );
   
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,7 +33,14 @@ const EditEmployee = () => {
   }, [id]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    
+    if (name === 'salary') {
+      if (!/^\d*\.?\d*$/.test(value)) return; 
+    }
+
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -100,6 +108,17 @@ const EditEmployee = () => {
             margin="normal"
             required
           />
+          <TextField 
+            fullWidth 
+            label="Salary" 
+            name="salary" 
+            value={formData.salary} 
+            onChange={handleChange} 
+            margin="normal"
+            required
+            type="text"
+            inputProps={{ inputMode: 'decimal' }} 
+          />
           <Box sx={{ mt: 3, display: 'flex', justifyContent: 'space-between' }}>
             <Button
               variant="outlined"
@@ -124,4 +143,3 @@ const EditEmployee = () => {
 };
 
 export default EditEmployee;
-
